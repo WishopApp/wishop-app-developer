@@ -1,61 +1,73 @@
 import React from 'react'
-import { Router, Link } from 'react-static'
-import styled, { injectGlobal } from 'styled-components'
+import { Router, Switch, Route } from 'react-static'
 import { hot } from 'react-hot-loader'
-//
-import Routes from 'react-static-routes'
+import { ApolloProvider } from 'react-apollo'
+import universal from 'react-universal-component'
+/* css */
+import 'antd/dist/antd.css'
+import './global-css'
+/* graphql */
+import client from './utils/apollo-connector'
 
-injectGlobal`
-  body {
-    font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial,
-      'Lucida Grande', sans-serif;
-    font-weight: 300;
-    font-size: 16px;
-    margin: 0;
-    padding: 0;
-  }
-`
+const Loading = () => <div />
 
-const AppStyles = styled.div`
-  a {
-    text-decoration: none;
-    color: #108db8;
-    font-weight: bold;
-  }
+const options = {
+  loading: Loading,
+}
 
-  nav {
-    width: 100%;
-    background: #108db8;
+const Layout = universal(import('./components/Layout'), options)
 
-    a {
-      color: white;
-      padding: 1rem;
-      display: inline-block;
-    }
-  }
+const Beacon = universal(import('./containers/Beacon'), options)
+const Category = universal(import('./containers/Category'), options)
+const User = universal(import('./containers/User'), options)
+const Product = universal(import('./containers/Product'), options)
+const Store = universal(import('./containers/Store'), options)
+const Login = universal(import('./containers/Login'), options)
+const NotFound = universal(import('./containers/404'), options)
 
-  .content {
-    padding: 1rem;
-  }
-
-  img {
-    max-width: 100%;
-  }
-`
+const RouteWithLayout = props => (
+  <Route
+    exact={props.exact}
+    path={props.path}
+    render={() => (
+      <Layout pageDetail={{ department: props.department }}>
+        {props.component}
+      </Layout>
+    )}
+  />
+)
 
 const App = () => (
-  <Router>
-    <AppStyles>
-      <nav>
-        <Link exact to="/">Home</Link>
-        <Link to="/about">About</Link>
-        <Link to="/blog">Blog</Link>
-      </nav>
-      <div className="content">
-        <Routes />
-      </div>
-    </AppStyles>
-  </Router>
+  <ApolloProvider client={client}>
+    <Router>
+      <Switch>
+        <RouteWithLayout
+          exact
+          path="/"
+          component={<Beacon />}
+          department="beacon"
+        />
+        <RouteWithLayout
+          path="/category"
+          component={<Category />}
+          department="category"
+        />
+        <RouteWithLayout path="/user" component={<User />} department="user" />
+        <RouteWithLayout
+          path="/product"
+          component={<Product />}
+          department="product"
+        />
+        <RouteWithLayout
+          path="/store"
+          component={<Store />}
+          department="store"
+        />
+        <Route path="/login" component={Login} />
+        <Route component={NotFound} />
+      </Switch>
+    </Router>
+  </ApolloProvider>
 )
 
 export default hot(module)(App)
