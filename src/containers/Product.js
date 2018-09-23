@@ -20,12 +20,6 @@ class Category extends Component {
           </Col>
           <Col span={24}>
             <Card>
-              <Row type="flex" justify="end" className="m-b-16">
-                <Button type="primary">
-                  <Icon type="plus" />
-                  ADD NEW
-                </Button>
-              </Row>
               <ProductTable />
             </Card>
           </Col>
