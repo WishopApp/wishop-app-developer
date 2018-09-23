@@ -1,51 +1,20 @@
 import React, { Component } from 'react'
 import { Link } from 'react-static'
-import { Table, Badge, Divider } from 'antd'
+import {
+  Table,
+  Badge,
+  Divider,
+  Select,
+  AutoComplete,
+  Modal,
+  Input,
+  Button,
+  List,
+  Row,
+  Col,
+} from 'antd'
 
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Token',
-    dataIndex: 'token',
-    key: 'token',
-  },
-  {
-    title: 'Store owner',
-    dataIndex: 'telno',
-    key: 'telno',
-  },
-  {
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-  },
-  {
-    title: 'Registered At',
-    dataIndex: 'registered_at',
-    key: 'registered_at',
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-    render: () => <Badge status="processing" text="NEW" />,
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <div>
-        <Link to="#">DETAIL</Link>
-        <Divider type="vertical" />
-        <Link to="#">ASSIGN STORE</Link>
-      </div>
-    ),
-  },
-]
+const Option = Select.Option
 
 const data = [
   {
@@ -71,8 +40,156 @@ const data = [
   },
 ]
 
+const data2 = [
+  'Racing car sprays burning fuel into crowd.',
+  'Japanese princess to wed commoner.',
+  'Australian walks 100km after outback crash.',
+  'Man charged over missing wedding girl.',
+  'Los Angeles battles huge wildfires.',
+]
+
 export default class CategoryTable extends Component {
+  state = {
+    visible: false,
+    detailVisible: false,
+    type: 'INDOOR',
+    locationX: '',
+    locationY: '',
+    dataSource: ['A', 'B', 'C'],
+  }
+
+  handleSearch = value => {
+    console.log(value)
+    // this.setState({
+    //   dataSource: !value ? [] : [value, value + value, value + value + value],
+    // })
+  }
+
+  changeStore = value => {
+    console.log(value)
+  }
+
   render() {
-    return <Table columns={columns} dataSource={data} />
+    const columns = [
+      {
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: 'Token',
+        dataIndex: 'token',
+        key: 'token',
+      },
+      {
+        title: 'Store owner',
+        dataIndex: 'telno',
+        key: 'telno',
+      },
+      {
+        title: 'Type',
+        dataIndex: 'type',
+        key: 'type',
+      },
+      {
+        title: 'Registered At',
+        dataIndex: 'registered_at',
+        key: 'registered_at',
+      },
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        render: () => <Badge status="processing" text="NEW" />,
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => (
+          <div>
+            <a onClick={() => this.setState({ detailVisible: true })}>DETAIL</a>
+            <Divider type="vertical" />
+            <a onClick={() => this.setState({ visible: true })}>ASSIGN</a>
+            <Divider type="vertical" />
+            <Link to="#">DE ASSIGN</Link>
+          </div>
+        ),
+      },
+    ]
+
+    return (
+      <div>
+        <Table columns={columns} dataSource={data} />
+
+        <Modal
+          title="USE HISTORY"
+          visible={this.state.detailVisible}
+          onOk={this.handleOk}
+          onCancel={() => this.setState({ detailVisible: false })}
+          okText="CREATE"
+          cancelText="CLOSE"
+        >
+          <p className="m-b-16">History</p>
+          <List
+            bordered
+            dataSource={data2}
+            renderItem={item => (
+              <List.Item>
+                <Row
+                  type="flex"
+                  justify="space-between"
+                  style={{ width: '100%' }}
+                >
+                  <Col span={16}>
+                    <p>{item}</p>
+                  </Col>
+                  <Col span={8} style={{ textAlign: 'right' }}>
+                    <p>2018-06-06</p>
+                  </Col>
+                </Row>
+              </List.Item>
+            )}
+          />
+          <p className="m-t-16 m-b-16">Close this Beacon</p>
+          <Button type="danger">CHANGE BEACON TO EXPIRE</Button>
+        </Modal>
+
+        <Modal
+          title="NEW BEACON"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={() => this.setState({ visible: false })}
+        >
+          <p className="m-b-16">Assign to</p>
+          <AutoComplete
+            dataSource={this.state.dataSource}
+            style={{ width: '100%' }}
+            onSelect={this.changeStore}
+            onSearch={this.handleSearch}
+          />
+          <p className="m-t-16 m-b-16">Type</p>
+          <Select
+            defaultValue={this.state.type}
+            style={{ width: '100%' }}
+            onChange={type => this.setState({ type })}
+          >
+            <Option value="INDOOR">Indoor</Option>
+            <Option value="STICKER">Sticker</Option>
+          </Select>
+          <p className="m-t-16 m-b-16">Location X</p>
+          <Input
+            type="number"
+            value={this.state.locationX}
+            onChange={e => this.setState({ locationX: e.target.value })}
+          />
+          <p className="m-t-16 m-b-16">Location Y</p>
+          <Input
+            type="number"
+            value={this.state.locationY}
+            onChange={e => this.setState({ locationY: e.target.value })}
+          />
+        </Modal>
+      </div>
+    )
   }
 }
