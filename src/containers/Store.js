@@ -20,12 +20,6 @@ class Store extends Component {
           </Col>
           <Col span={24}>
             <Card className="m-t-16">
-              <Row type="flex" justify="end" className="m-b-16">
-                <Button type="primary">
-                  <Icon type="plus" />
-                  ADD NEW
-                </Button>
-              </Row>
               <StoreTable />
             </Card>
           </Col>

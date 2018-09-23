@@ -28,7 +28,6 @@ injectGlobal`
 
   span {
     font-family: 'Montserrat', sans-serif;
-    color: #fff;
     margin: 0;
     font-size: 10px;
   }
