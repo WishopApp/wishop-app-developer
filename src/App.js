@@ -20,8 +20,11 @@ const Layout = universal(import('./components/Layout'), options)
 const Beacon = universal(import('./containers/Beacon'), options)
 const Category = universal(import('./containers/Category'), options)
 const User = universal(import('./containers/User'), options)
+const UserDetail = universal(import('./containers/UserDetail'), options)
 const Product = universal(import('./containers/Product'), options)
+const ProductDetail = universal(import('./containers/ProductDetail'), options)
 const Store = universal(import('./containers/Store'), options)
+const StoreDetail = universal(import('./containers/StoreDetail'), options)
 const Login = universal(import('./containers/Login'), options)
 const NotFound = universal(import('./containers/404'), options)
 
@@ -52,11 +55,26 @@ const App = () => (
           component={<Category />}
           department="category"
         />
+        <RouteWithLayout
+          path="/user/:id"
+          component={<UserDetail />}
+          department="user"
+        />
         <RouteWithLayout path="/user" component={<User />} department="user" />
+        <RouteWithLayout
+          path="/product/:id"
+          component={<ProductDetail />}
+          department="product"
+        />
         <RouteWithLayout
           path="/product"
           component={<Product />}
           department="product"
+        />
+        <RouteWithLayout
+          path="/store/:id"
+          component={<StoreDetail />}
+          department="store"
         />
         <RouteWithLayout
           path="/store"

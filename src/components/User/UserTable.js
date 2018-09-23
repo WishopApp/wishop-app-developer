@@ -34,7 +34,7 @@ const columns = [
     key: 'action',
     render: (text, record) => (
       <div>
-        <Link to="#">DETAIL</Link>
+        <Link to={`/user/1`}>DETAIL</Link>
       </div>
     ),
   },
