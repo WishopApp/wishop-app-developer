@@ -41,11 +41,18 @@ const data = [
 ]
 
 const data2 = [
-  'Racing car sprays burning fuel into crowd.',
-  'Japanese princess to wed commoner.',
-  'Australian walks 100km after outback crash.',
-  'Man charged over missing wedding girl.',
-  'Los Angeles battles huge wildfires.',
+  {
+    type: 'ASSIGN',
+    title: `Assign to 'Store name'`,
+  },
+  {
+    type: 'IDLE',
+    title: `Change status to 'Idle'`,
+  },
+  {
+    type: 'EXPIRED',
+    title: `Change status to 'Expire'`,
+  },
 ]
 
 export default class CategoryTable extends Component {
@@ -122,7 +129,7 @@ export default class CategoryTable extends Component {
         <Table columns={columns} dataSource={data} />
 
         <Modal
-          title="USE HISTORY"
+          title="USAGE HISTORY"
           visible={this.state.detailVisible}
           onOk={this.handleOk}
           onCancel={() => this.setState({ detailVisible: false })}
@@ -130,26 +137,37 @@ export default class CategoryTable extends Component {
           cancelText="CLOSE"
         >
           <p className="m-b-16">History</p>
-          <List
-            bordered
-            dataSource={data2}
-            renderItem={item => (
-              <List.Item>
-                <Row
-                  type="flex"
-                  justify="space-between"
-                  style={{ width: '100%' }}
-                >
-                  <Col span={16}>
-                    <p>{item}</p>
-                  </Col>
-                  <Col span={8} style={{ textAlign: 'right' }}>
-                    <p>2018-06-06</p>
-                  </Col>
-                </Row>
-              </List.Item>
-            )}
-          />
+          <Row style={{ marginBottom: 50 }}>
+            <List
+              bordered
+              dataSource={data2}
+              renderItem={item => (
+                <List.Item>
+                  <Row
+                    type="flex"
+                    justify="space-between"
+                    style={{ width: '100%' }}
+                  >
+                    <Col span={16}>
+                      {item.type === 'ASSIGN' && (
+                        <Badge status="processing" text={item.title} />
+                      )}
+                      {item.type === 'IDLE' && (
+                        <Badge status="success" text={item.title} />
+                      )}
+                      {item.type === 'EXPIRED' && (
+                        <Badge status="error" text={item.title} />
+                      )}
+                    </Col>
+                    <Col span={8} style={{ textAlign: 'right' }}>
+                      <p>2018-06-06</p>
+                    </Col>
+                  </Row>
+                </List.Item>
+              )}
+            />
+          </Row>
+
           <p className="m-t-16 m-b-16">Close this Beacon</p>
           <Button type="danger">CHANGE BEACON TO EXPIRE</Button>
         </Modal>
