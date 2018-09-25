@@ -215,6 +215,8 @@ class Category extends Component {
           visible={this.state.cateVisible}
           onOk={this.createCategory}
           onCancel={() => this.setState({ cateVisible: false })}
+          okText="CREATE"
+          cancelText="CLOSE"
         >
           <p className="m-b-16">Name</p>
           <Input
@@ -290,6 +292,8 @@ class Category extends Component {
           visible={this.state.subCateVisible}
           onOk={this.createSubCategory}
           onCancel={() => this.setState({ subCateVisible: false })}
+          okText="CREATE"
+          cancelText="CLOSE"
         >
           <p className="m-b-16">Category</p>
           <AutoComplete
