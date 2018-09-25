@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { Row, Col, Card, Button, Icon, Modal, AutoComplete, Input, Divider } from 'antd'
-import { Mutation } from 'react-apollo'
+import { Mutation, Query } from 'react-apollo'
 
 import CategoryTable from '../components/Category/CategoryTable'
 import SubCategoryTable from '../components/Category/SubCategoryTable'
-import { CREATE_CATEGORY } from '../graphql/mutation/category'
+import { CREATE_CATEGORY, CREATE_CATEGORY_PROP } from '../graphql/mutation/category'
+import { CREATE_SUB_CATEGORY, CREATE_SUB_CATEGORY_PROP } from '../graphql/mutation/sub-category'
+import { CATEGORIES } from '../graphql/query/category'
+import { SUB_CATEGORIES } from '../graphql/query/sub-category'
 
 class Category extends Component {
   state = {
@@ -12,31 +15,78 @@ class Category extends Component {
     subCateVisible: false,
     cateName: '',
     cateProps: [{ name: '', choices: [''] }],
-    dataSource: ['A', 'B', 'C'],
+    subCateName: '',
+    categoryId: '',
   }
 
   createCategory = async e => {
     try {
       e.preventDefault()
 
-      console.log('CREATE')
-
-      const { data } = await this.props.createCategory({
-        variables: { cateName: this.state.cateName },
+      const {
+        data: { createCategory },
+      } = await this.props.createCategory({
+        variables: { name: this.state.cateName },
       })
-
-      console.log(data)
 
       Promise.all(
         await this.state.cateProps.map(p => {
           return this.props.createCategoryProp({
-            variables: { categoryId: data._id, name: p.name, values: p.choices },
+            variables: { categoryId: createCategory._id, name: p.name, values: p.choices },
           })
         }),
       )
+
+      this.setState({
+        cateVisible: false,
+        cateName: '',
+        cateProps: [{ name: '', choices: [''] }],
+      })
     } catch (err) {
       console.log(err)
     }
+  }
+
+  createSubCategory = async e => {
+    try {
+      e.preventDefault()
+
+      const {
+        data: { createSubCategory },
+      } = await this.props.createSubCategory({
+        variables: { categoryId: this.state.categoryId, name: this.state.subCateName },
+      })
+
+      Promise.all(
+        await this.state.cateProps.map(p => {
+          return this.props.createSubCategoryProp({
+            variables: { subCategoryId: createSubCategory._id, name: p.name, values: p.choices },
+          })
+        }),
+      )
+
+      this.setState({
+        subCateVisible: false,
+        categoryId: '',
+        subCateName: '',
+        cateProps: [{ name: '', choices: [''] }],
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  changeStore = value => {
+    let categoryId = ''
+    this.props.categories.map(c => {
+      if (c.name === value) {
+        categoryId = c._id
+      }
+    })
+
+    this.setState({
+      categoryId,
+    })
   }
 
   addProp = () => {
@@ -108,6 +158,8 @@ class Category extends Component {
   }
 
   render() {
+    const autoCompleteSource = this.props.categories.map(c => c.name)
+
     return (
       <Row gutter={16}>
         <Col span={12}>
@@ -122,7 +174,14 @@ class Category extends Component {
                   ADD NEW
                 </Button>
               </Row>
-              <CategoryTable />
+              <Query query={CATEGORIES}>
+                {({ loading, error, data }) => {
+                  if (loading) return 'Loading...'
+                  if (error) return `Error! ${error.message}`
+
+                  return <CategoryTable dataSource={data.categories} />
+                }}
+              </Query>
             </Card>
           </Col>
         </Col>
@@ -139,7 +198,14 @@ class Category extends Component {
                   ADD NEW
                 </Button>
               </Row>
-              <SubCategoryTable />
+              <Query query={SUB_CATEGORIES}>
+                {({ loading, error, data: { subCategories } }) => {
+                  if (loading) return 'Loading...'
+                  if (error) return `Error! ${error.message}`
+
+                  return <SubCategoryTable dataSource={subCategories} />
+                }}
+              </Query>
             </Card>
           </Col>
         </Col>
@@ -222,12 +288,12 @@ class Category extends Component {
         <Modal
           title="NEW SUB CATEGORY"
           visible={this.state.subCateVisible}
-          onOk={this.handleOk}
+          onOk={this.createSubCategory}
           onCancel={() => this.setState({ subCateVisible: false })}
         >
           <p className="m-b-16">Category</p>
           <AutoComplete
-            dataSource={this.state.dataSource}
+            dataSource={autoCompleteSource}
             style={{ width: '100%' }}
             onSelect={this.changeStore}
             onSearch={this.handleSearch}
@@ -235,8 +301,8 @@ class Category extends Component {
           <p className="m-t-16 m-b-16">Name</p>
           <Input
             type="text"
-            value={this.state.cateName}
-            onChange={e => this.setState({ cateName: e.target.value })}
+            value={this.state.subCateName}
+            onChange={e => this.setState({ subCateName: e.target.value })}
           />
           <Divider />
           {this.state.cateProps.map((c, propIndex) => (
@@ -311,4 +377,39 @@ const CategoryMutation = props => (
   </Mutation>
 )
 
-export default CategoryMutation
+const CategoryMutation2 = props => (
+  <Mutation mutation={CREATE_CATEGORY_PROP}>
+    {(createCategoryProp, _) => (
+      <CategoryMutation createCategoryProp={createCategoryProp} {...props} />
+    )}
+  </Mutation>
+)
+
+const CategoryMutation3 = props => (
+  <Mutation mutation={CREATE_SUB_CATEGORY}>
+    {(createSubCategory, _) => (
+      <CategoryMutation2 createSubCategory={createSubCategory} {...props} />
+    )}
+  </Mutation>
+)
+
+const CategoryMutation4 = props => (
+  <Mutation mutation={CREATE_SUB_CATEGORY_PROP}>
+    {(createSubCategoryProp, _) => (
+      <CategoryMutation3 createSubCategoryProp={createSubCategoryProp} {...props} />
+    )}
+  </Mutation>
+)
+
+const CategoryQuery = props => (
+  <Query query={CATEGORIES}>
+    {({ loading, error, data }) => {
+      if (loading) return 'Loading...'
+      if (error) return `Error! ${error.message}`
+
+      return <CategoryMutation4 categories={data.categories} {...props} />
+    }}
+  </Query>
+)
+
+export default CategoryQuery

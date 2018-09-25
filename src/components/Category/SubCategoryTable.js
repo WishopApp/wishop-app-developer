@@ -12,6 +12,7 @@ const columns = [
     title: 'Category',
     dataIndex: 'category',
     key: 'category',
+    render: (text, record) => <p>{record.category.name}</p>,
   },
   {
     title: 'Action',
@@ -20,29 +21,8 @@ const columns = [
   },
 ]
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    category: 'Shoe',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    category: 'Dress',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    category: 'Shoe',
-    tags: ['cool', 'teacher'],
-  },
-]
-
 export default class SubCategoryTable extends Component {
   render() {
-    return <Table columns={columns} dataSource={data} />
+    return <Table columns={columns} dataSource={this.props.dataSource} />
   }
 }
