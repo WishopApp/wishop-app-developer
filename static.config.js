@@ -1,6 +1,8 @@
-import axios from 'axios'
+import dotenv from 'dotenv'
 import React, { Component } from 'react'
 import { ServerStyleSheet } from 'styled-components'
+
+dotenv.config()
 
 export default {
   getSiteData: () => ({
@@ -20,10 +22,7 @@ export default {
         <Html>
           <Head>
             <meta charSet="UTF-8" />
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1"
-            />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
             <title>Wishop Developer</title>
             <link rel="icon" type="image/png" href="./logo/wishop-icon.png" />
             {renderMeta.styleTags}

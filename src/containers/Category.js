@@ -1,25 +1,42 @@
 import React, { Component } from 'react'
-import {
-  Row,
-  Col,
-  Card,
-  Button,
-  Icon,
-  Modal,
-  AutoComplete,
-  Input,
-  Divider,
-} from 'antd'
+import { Row, Col, Card, Button, Icon, Modal, AutoComplete, Input, Divider } from 'antd'
+import { Mutation } from 'react-apollo'
 
 import CategoryTable from '../components/Category/CategoryTable'
 import SubCategoryTable from '../components/Category/SubCategoryTable'
+import { CREATE_CATEGORY } from '../graphql/mutation/category'
 
 class Category extends Component {
   state = {
     cateVisible: false,
     subCateVisible: false,
+    cateName: '',
     cateProps: [{ name: '', choices: [''] }],
     dataSource: ['A', 'B', 'C'],
+  }
+
+  createCategory = async e => {
+    try {
+      e.preventDefault()
+
+      console.log('CREATE')
+
+      const { data } = await this.props.createCategory({
+        variables: { cateName: this.state.cateName },
+      })
+
+      console.log(data)
+
+      Promise.all(
+        await this.state.cateProps.map(p => {
+          return this.props.createCategoryProp({
+            variables: { categoryId: data._id, name: p.name, values: p.choices },
+          })
+        }),
+      )
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   addProp = () => {
@@ -100,10 +117,7 @@ class Category extends Component {
           <Col span={24}>
             <Card className="m-t-16">
               <Row type="flex" justify="end" className="m-b-16">
-                <Button
-                  type="primary"
-                  onClick={() => this.setState({ cateVisible: true })}
-                >
+                <Button type="primary" onClick={() => this.setState({ cateVisible: true })}>
                   <Icon type="plus" />
                   ADD NEW
                 </Button>
@@ -120,10 +134,7 @@ class Category extends Component {
           <Col span={24}>
             <Card className="m-t-16">
               <Row type="flex" justify="end" className="m-b-16">
-                <Button
-                  type="primary"
-                  onClick={() => this.setState({ subCateVisible: true })}
-                >
+                <Button type="primary" onClick={() => this.setState({ subCateVisible: true })}>
                   <Icon type="plus" />
                   ADD NEW
                 </Button>
@@ -136,7 +147,7 @@ class Category extends Component {
         <Modal
           title="NEW CATEGORY"
           visible={this.state.cateVisible}
-          onOk={this.handleOk}
+          onOk={this.createCategory}
           onCancel={() => this.setState({ cateVisible: false })}
         >
           <p className="m-b-16">Name</p>
@@ -151,10 +162,7 @@ class Category extends Component {
               <Row type="flex" justify="space-between">
                 <p>Property {propIndex + 1}</p>
                 {propIndex !== 0 && (
-                  <Button
-                    type="danger"
-                    onClick={() => this.removeProp(propIndex)}
-                  >
+                  <Button type="danger" onClick={() => this.removeProp(propIndex)}>
                     <Icon type="minus" />
                     <span>DELETE</span>
                   </Button>
@@ -175,11 +183,7 @@ class Category extends Component {
                         type="text"
                         value={c}
                         onChange={e =>
-                          this.changeCateChoice(
-                            e.target.value,
-                            propIndex,
-                            choiceIndex
-                          )
+                          this.changeCateChoice(e.target.value, propIndex, choiceIndex)
                         }
                         className="m-b-16"
                       />
@@ -188,9 +192,7 @@ class Category extends Component {
                       <Col span={2}>
                         <Button
                           type="danger"
-                          onClick={() =>
-                            this.removeCateChoice(propIndex, choiceIndex)
-                          }
+                          onClick={() => this.removeCateChoice(propIndex, choiceIndex)}
                         >
                           <Icon type="minus" />
                         </Button>
@@ -242,10 +244,7 @@ class Category extends Component {
               <Row type="flex" justify="space-between">
                 <p>Property {propIndex + 1}</p>
                 {propIndex !== 0 && (
-                  <Button
-                    type="danger"
-                    onClick={() => this.removeProp(propIndex)}
-                  >
+                  <Button type="danger" onClick={() => this.removeProp(propIndex)}>
                     <Icon type="minus" />
                     <span>DELETE</span>
                   </Button>
@@ -266,11 +265,7 @@ class Category extends Component {
                         type="text"
                         value={c}
                         onChange={e =>
-                          this.changeCateChoice(
-                            e.target.value,
-                            propIndex,
-                            choiceIndex
-                          )
+                          this.changeCateChoice(e.target.value, propIndex, choiceIndex)
                         }
                         className="m-b-16"
                       />
@@ -279,9 +274,7 @@ class Category extends Component {
                       <Col span={2}>
                         <Button
                           type="danger"
-                          onClick={() =>
-                            this.removeCateChoice(propIndex, choiceIndex)
-                          }
+                          onClick={() => this.removeCateChoice(propIndex, choiceIndex)}
                         >
                           <Icon type="minus" />
                         </Button>
@@ -312,4 +305,10 @@ class Category extends Component {
   }
 }
 
-export default Category
+const CategoryMutation = props => (
+  <Mutation mutation={CREATE_CATEGORY}>
+    {(createCategory, _) => <Category createCategory={createCategory} {...props} />}
+  </Mutation>
+)
+
+export default CategoryMutation
