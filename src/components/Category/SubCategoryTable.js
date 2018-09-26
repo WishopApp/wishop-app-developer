@@ -12,7 +12,7 @@ const columns = [
     title: 'Category',
     dataIndex: 'category',
     key: 'category',
-    render: (text, record) => <p>{record.category.name}</p>,
+    render: (text, record) => <p>{record.category && record.category.name}</p>,
   },
   {
     title: 'Action',

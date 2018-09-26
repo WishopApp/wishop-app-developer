@@ -5,6 +5,16 @@ export const CATEGORIES = gql`
     categories(limit: $limit, skip: $skip) {
       _id
       name
+      properties {
+        _id
+        categoryId
+        name
+        values
+      }
+      subCategories {
+        _id
+        name
+      }
     }
   }
 `
