@@ -26,17 +26,14 @@ const ProductDetail = universal(import('./containers/ProductDetail'), options)
 const Store = universal(import('./containers/Store'), options)
 const StoreDetail = universal(import('./containers/StoreDetail'), options)
 const Login = universal(import('./containers/Login'), options)
+const Logout = universal(import('./containers/Logout'), options)
 const NotFound = universal(import('./containers/404'), options)
 
 const RouteWithLayout = props => (
   <Route
     exact={props.exact}
     path={props.path}
-    render={() => (
-      <Layout pageDetail={{ department: props.department }}>
-        {props.component}
-      </Layout>
-    )}
+    render={() => <Layout pageDetail={{ department: props.department }}>{props.component}</Layout>}
   />
 )
 
@@ -44,44 +41,16 @@ const App = () => (
   <ApolloProvider client={client}>
     <Router>
       <Switch>
-        <RouteWithLayout
-          exact
-          path="/"
-          component={<Beacon />}
-          department="beacon"
-        />
-        <RouteWithLayout
-          path="/category"
-          component={<Category />}
-          department="category"
-        />
-        <RouteWithLayout
-          path="/user/:id"
-          component={<UserDetail />}
-          department="user"
-        />
+        <RouteWithLayout exact path="/" component={<Beacon />} department="beacon" />
+        <RouteWithLayout path="/category" component={<Category />} department="category" />
+        <RouteWithLayout path="/user/:id" component={<UserDetail />} department="user" />
         <RouteWithLayout path="/user" component={<User />} department="user" />
-        <RouteWithLayout
-          path="/product/:id"
-          component={<ProductDetail />}
-          department="product"
-        />
-        <RouteWithLayout
-          path="/product"
-          component={<Product />}
-          department="product"
-        />
-        <RouteWithLayout
-          path="/store/:id"
-          component={<StoreDetail />}
-          department="store"
-        />
-        <RouteWithLayout
-          path="/store"
-          component={<Store />}
-          department="store"
-        />
+        <RouteWithLayout path="/product/:id" component={<ProductDetail />} department="product" />
+        <RouteWithLayout path="/product" component={<Product />} department="product" />
+        <RouteWithLayout path="/store/:id" component={<StoreDetail />} department="store" />
+        <RouteWithLayout path="/store" component={<Store />} department="store" />
         <Route path="/login" component={Login} />
+        <Route path="/logout" component={Logout} />
         <Route component={NotFound} />
       </Switch>
     </Router>

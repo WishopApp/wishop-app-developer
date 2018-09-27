@@ -4,6 +4,11 @@ import { Table, Badge } from 'antd'
 
 const columns = [
   {
+    title: 'E-mail',
+    dataIndex: 'email',
+    key: 'email',
+  },
+  {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
@@ -40,32 +45,8 @@ const columns = [
   },
 ]
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-]
-
 export default class UserTable extends Component {
   render() {
-    return <Table columns={columns} dataSource={data} />
+    return <Table columns={columns} dataSource={this.props.dataSource} />
   }
 }

@@ -8,6 +8,11 @@ export const SUB_CATEGORIES = gql`
       category {
         name
       }
+      properties {
+        _id
+        name
+        values
+      }
     }
   }
 `
