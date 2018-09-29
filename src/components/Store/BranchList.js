@@ -20,8 +20,8 @@ const columns = [
   },
   {
     title: 'Created At',
-    dataIndex: 'created_at',
-    key: 'created_at',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
   },
   {
     title: 'Status',

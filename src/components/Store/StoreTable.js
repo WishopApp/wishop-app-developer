@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-static'
 import { Table, Badge } from 'antd'
+import { Query } from 'react-apollo'
+import { STORES } from '../../graphql/query/store'
 
 const columns = [
   {
@@ -17,11 +19,12 @@ const columns = [
     title: 'Owner',
     dataIndex: 'owner',
     key: 'owner',
+    render: owner => owner && <p>{owner.email}</p>,
   },
   {
     title: 'Created At',
-    dataIndex: 'created_at',
-    key: 'created_at',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
   },
   {
     title: 'Status',
@@ -32,36 +35,23 @@ const columns = [
   {
     title: 'Action',
     key: 'action',
-    render: (text, record) => <Link to={`/store/1`}>MORE</Link>,
-  },
-]
-
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
+    render: (text, record) => <Link to={`/store/${record._id}`}>MORE</Link>,
   },
 ]
 
 export default class StoreTable extends Component {
   render() {
-    return <Table columns={columns} dataSource={data} />
+    return (
+      <div>
+        <Query query={STORES}>
+          {({ loading, error, data }) => {
+            if (loading) return <Table loading />
+            if (error) return `Error: ${error.message}`
+
+            return <Table columns={columns} dataSource={data.stores} />
+          }}
+        </Query>
+      </div>
+    )
   }
 }
