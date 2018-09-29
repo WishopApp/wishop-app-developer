@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-static'
 import { Table, Badge } from 'antd'
+import { Query } from 'react-apollo'
+import { PRODUCTS } from '../../graphql/query/product'
 
 const columns = [
   {
@@ -17,11 +19,13 @@ const columns = [
     title: 'Category',
     dataIndex: 'category',
     key: 'category',
+    render: category => <p>{category.name}</p>,
   },
   {
     title: 'Store',
     dataIndex: 'store',
     key: 'store',
+    render: store => <p>{store.name}</p>,
   },
   {
     title: 'Created At',
@@ -32,41 +36,33 @@ const columns = [
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: () => <Badge status="success" text="Available" />,
+    render: status => {
+      if (status === 'AVAILABLE')
+        return <Badge status="success" text="Available" />
+      if (status === 'OUT_OF_STOCK')
+        return <Badge status="error" text="Out of stock" />
+    },
   },
   {
     title: 'Action',
     key: 'action',
-    render: (text, record) => <Link to={`/product/1`}>MORE</Link>,
-  },
-]
-
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
+    render: (text, record) => <Link to={`/product/${record._id}`}>MORE</Link>,
   },
 ]
 
 export default class ProductTable extends Component {
   render() {
-    return <Table columns={columns} dataSource={data} />
+    return (
+      <div>
+        <Query query={PRODUCTS}>
+          {({ loading, error, data }) => {
+            if (loading) return <Table loading />
+            if (error) return `Error: ${error.message}`
+
+            return <Table columns={columns} dataSource={data.products} />
+          }}
+        </Query>
+      </div>
+    )
   }
 }
