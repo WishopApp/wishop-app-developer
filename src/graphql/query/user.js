@@ -22,3 +22,14 @@ export const USERS = gql`
     }
   }
 `
+
+export const USER_STATISTIC = gql`
+  query UserStatistic {
+    userStatistic {
+      customer
+      shopOwner
+      banned
+      total
+    }
+  }
+`

@@ -57,8 +57,8 @@ export default class CategoryTable extends Component {
       },
       {
         title: 'Registered At',
-        dataIndex: 'registered_at',
-        key: 'registered_at',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
       },
       {
         title: 'Status',

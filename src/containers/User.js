@@ -21,14 +21,7 @@ class User extends Component {
         </Col>
         <Col span={24}>
           <Card className="m-t-16">
-            <Query query={USERS}>
-              {({ loading, error, data }) => {
-                if (loading) return 'Loading...'
-                if (error) return `Error - ${error.message}`
-
-                return <UserTable dataSource={data.users} />
-              }}
-            </Query>
+            <UserTable />
           </Card>
         </Col>
       </Row>

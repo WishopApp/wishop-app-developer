@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { Link } from 'react-static'
 import { Table, Badge } from 'antd'
+import { Query } from 'react-apollo'
+
+import { USERS } from '../../graphql/query/user'
 
 const columns = [
   {
@@ -10,13 +13,9 @@ const columns = [
   },
   {
     title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Store name',
-    dataIndex: 'token',
-    key: 'token',
+    dataIndex: 'profile',
+    key: 'profile',
+    render: profile => <p>{profile.name}</p>,
   },
   {
     title: 'Type',
@@ -25,8 +24,8 @@ const columns = [
   },
   {
     title: 'Registered At',
-    dataIndex: 'registered_at',
-    key: 'registered_at',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
   },
   {
     title: 'Status',
@@ -39,7 +38,7 @@ const columns = [
     key: 'action',
     render: (text, record) => (
       <div>
-        <Link to={`/user/1`}>DETAIL</Link>
+        <Link to={`/user/${record._id}`}>DETAIL</Link>
       </div>
     ),
   },
@@ -47,6 +46,15 @@ const columns = [
 
 export default class UserTable extends Component {
   render() {
-    return <Table columns={columns} dataSource={this.props.dataSource} />
+    return (
+      <Query query={USERS}>
+        {({ loading, error, data }) => {
+          if (loading) return <Table loading />
+          if (error) return `Error: ${error.message}`
+
+          return <Table columns={columns} dataSource={data.users} />
+        }}
+      </Query>
+    )
   }
 }
