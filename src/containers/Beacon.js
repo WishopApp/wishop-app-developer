@@ -1,27 +1,16 @@
 import React, { Component } from 'react'
-import {
-  Row,
-  Col,
-  Card,
-  Button,
-  Icon,
-  Modal,
-  Input,
-  Select,
-  AutoComplete,
-} from 'antd'
+import { Row, Col, Card, Button, Icon, Modal, Input, notification } from 'antd'
+import { Mutation } from 'react-apollo'
 
 import BeaconReqTable from '../components/Beacon/BeaconReqTable'
 import BeaconReqStat from '../components/Beacon/BeaconReqStat'
 import BeaconTable from '../components/Beacon/BeaconTable'
 import BeaconStat from '../components/Beacon/BeaconStat'
-
-const Option = Select.Option
+import { CREATE_BEACON } from '../graphql/mutation/beacon'
 
 class Beacon extends Component {
   state = {
     visible: false,
-    detailVisible: false,
     name: '',
     uuid: '',
     major: '',
@@ -69,39 +58,73 @@ class Beacon extends Component {
           </Card>
         </Col>
 
-        <Modal
-          title="NEW BEACON"
-          visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={() => this.setState({ visible: false })}
-          okText="CREATE"
-          cancelText="CLOSE"
-        >
-          <p className="m-b-16">Name</p>
-          <Input
-            type="text"
-            value={this.state.name}
-            onChange={e => this.setState({ name: e.target.value })}
-          />
-          <p className="m-t-16 m-b-16">UUID</p>
-          <Input
-            type="text"
-            value={this.state.uuid}
-            onChange={e => this.setState({ uuid: e.target.value })}
-          />
-          <p className="m-t-16 m-b-16">Major</p>
-          <Input
-            type="text"
-            value={this.state.major}
-            onChange={e => this.setState({ major: e.target.value })}
-          />
-          <p className="m-t-16 m-b-16">Minor</p>
-          <Input
-            type="text"
-            value={this.state.minor}
-            onChange={e => this.setState({ minor: e.target.value })}
-          />
-        </Modal>
+        <Mutation mutation={CREATE_BEACON}>
+          {(createBeacon, _) => (
+            <Modal
+              title="NEW BEACON"
+              visible={this.state.visible}
+              onOk={async () => {
+                try {
+                  await createBeacon({
+                    variables: {
+                      name: this.state.name,
+                      uuid: this.state.uuid,
+                      major: this.state.major,
+                      minor: this.state.minor,
+                    },
+                  })
+
+                  this.setState({
+                    visible: false,
+                    name: '',
+                    uuid: '',
+                    major: '',
+                    minor: '',
+                  })
+
+                  notification.success({
+                    message: 'Success',
+                    description: 'New beacon has been created.',
+                  })
+                } catch (err) {
+                  notification.error({
+                    message: 'Error',
+                    description:
+                      'Please check your information before create or try again later.',
+                  })
+                }
+              }}
+              onCancel={() => this.setState({ visible: false })}
+              okText="CREATE"
+              cancelText="CLOSE"
+            >
+              <p className="m-b-16">Name</p>
+              <Input
+                type="text"
+                value={this.state.name}
+                onChange={e => this.setState({ name: e.target.value })}
+              />
+              <p className="m-t-16 m-b-16">UUID</p>
+              <Input
+                type="text"
+                value={this.state.uuid}
+                onChange={e => this.setState({ uuid: e.target.value })}
+              />
+              <p className="m-t-16 m-b-16">Major</p>
+              <Input
+                type="Number"
+                value={this.state.major}
+                onChange={e => this.setState({ major: e.target.value })}
+              />
+              <p className="m-t-16 m-b-16">Minor</p>
+              <Input
+                type="Number"
+                value={this.state.minor}
+                onChange={e => this.setState({ minor: e.target.value })}
+              />
+            </Modal>
+          )}
+        </Mutation>
       </Row>
     )
   }

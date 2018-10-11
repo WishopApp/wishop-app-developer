@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-static'
+import { Query } from 'react-apollo'
+import moment from 'moment'
 import {
   Table,
   Badge,
@@ -13,67 +15,44 @@ import {
   Row,
   Col,
 } from 'antd'
+import { BEACONS } from '../../graphql/query/beacon'
+import { STORES } from '../../graphql/query/store'
 
 const Option = Select.Option
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-]
-
-const data2 = [
-  {
-    type: 'ASSIGN',
-    title: `Assign to 'Store name'`,
-  },
-  {
-    type: 'IDLE',
-    title: `Change status to 'Idle'`,
-  },
-  {
-    type: 'EXPIRED',
-    title: `Change status to 'Expire'`,
-  },
-]
-
 export default class CategoryTable extends Component {
+  s
   state = {
     visible: false,
     detailVisible: false,
+    beaconHistory: [],
     type: 'INDOOR',
     locationX: '',
     locationY: '',
-    dataSource: ['A', 'B', 'C'],
+    filterChoice: [],
+    filterWord: '',
+    storeId: '',
   }
 
-  handleSearch = value => {
-    console.log(value)
-    // this.setState({
-    //   dataSource: !value ? [] : [value, value + value, value + value + value],
-    // })
+  handleSearch = (value, storeNames) => {
+    if (storeNames.length !== 0) {
+      const filterChoice = storeNames.filter(name => name.includes(value))
+      this.setState({
+        filterChoice,
+        filterWord: value,
+      })
+    }
   }
 
-  changeStore = value => {
-    console.log(value)
+  changeStore = (value, stores) => {
+    const filteredStore = stores.filter(store => store.name === value)
+    this.setState({
+      storeId: filteredStore[0]._id,
+    })
+  }
+
+  assignTo = () => {
+    console.log(this.state.storeId)
   }
 
   render() {
@@ -84,14 +63,29 @@ export default class CategoryTable extends Component {
         key: 'name',
       },
       {
-        title: 'Token',
-        dataIndex: 'token',
-        key: 'token',
+        title: 'UUID',
+        dataIndex: 'uuid',
+        key: 'uuid',
       },
       {
-        title: 'Store owner',
-        dataIndex: 'telno',
-        key: 'telno',
+        title: 'Major',
+        dataIndex: 'major',
+        key: 'major',
+      },
+      {
+        title: 'Minor',
+        dataIndex: 'minor',
+        key: 'minor',
+      },
+      {
+        title: 'Location X',
+        dataIndex: 'locationX',
+        key: 'locationX',
+      },
+      {
+        title: 'Location Y',
+        dataIndex: 'locationY',
+        key: 'locationY',
       },
       {
         title: 'Type',
@@ -102,6 +96,13 @@ export default class CategoryTable extends Component {
         title: 'Registered At',
         dataIndex: 'createdAt',
         key: 'createdAt',
+        align: 'center',
+        render: createdAt => (
+          <div>
+            <p>{moment(createdAt).format('DD-MM-YY')}</p>
+            <p>{moment(createdAt).format('HH:MM')}</p>
+          </div>
+        ),
       },
       {
         title: 'Status',
@@ -114,11 +115,22 @@ export default class CategoryTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <a onClick={() => this.setState({ detailVisible: true })}>DETAIL</a>
+            <a
+              onClick={() =>
+                this.setState({
+                  detailVisible: true,
+                  beaconHistory: record.history || [],
+                })
+              }
+            >
+              DETAIL
+            </a>
             <Divider type="vertical" />
             <a onClick={() => this.setState({ visible: true })}>ASSIGN</a>
             <Divider type="vertical" />
             <Link to="#">DE ASSIGN</Link>
+            <Divider type="vertical" />
+            <Button type="danger">CLOSE</Button>
           </div>
         ),
       },
@@ -126,21 +138,27 @@ export default class CategoryTable extends Component {
 
     return (
       <div>
-        <Table columns={columns} dataSource={data} />
+        <Query query={BEACONS}>
+          {({ loading, error, data }) => {
+            if (loading) return <Table loading />
+            if (error) return `Error: ${error.message}`
+
+            return <Table columns={columns} dataSource={data.beacons} />
+          }}
+        </Query>
 
         <Modal
           title="USAGE HISTORY"
           visible={this.state.detailVisible}
           onOk={this.handleOk}
           onCancel={() => this.setState({ detailVisible: false })}
-          okText="CREATE"
-          cancelText="CLOSE"
+          footer={null}
         >
           <p className="m-b-16">History</p>
           <Row style={{ marginBottom: 50 }}>
             <List
               bordered
-              dataSource={data2}
+              dataSource={this.state.beaconHistory}
               renderItem={item => (
                 <List.Item>
                   <Row
@@ -160,31 +178,47 @@ export default class CategoryTable extends Component {
                       )}
                     </Col>
                     <Col span={8} style={{ textAlign: 'right' }}>
-                      <p>2018-06-06</p>
+                      <div>
+                        <p>{moment(item.createdAt).format('DD-MM-YY HH:MM')}</p>
+                      </div>
                     </Col>
                   </Row>
                 </List.Item>
               )}
             />
           </Row>
-
-          <p className="m-t-16 m-b-16">Close this Beacon</p>
-          <Button type="danger">CHANGE BEACON TO EXPIRE</Button>
         </Modal>
 
         <Modal
-          title="NEW BEACON"
+          title="ASSIGN TO"
           visible={this.state.visible}
-          onOk={this.handleOk}
+          onOk={this.assignTo}
           onCancel={() => this.setState({ visible: false })}
+          cancelText="CLOSE"
+          okText="SAVE"
         >
           <p className="m-b-16">Assign to</p>
-          <AutoComplete
-            dataSource={this.state.dataSource}
-            style={{ width: '100%' }}
-            onSelect={this.changeStore}
-            onSearch={this.handleSearch}
-          />
+          <Query query={STORES}>
+            {({ loading, error, data }) => {
+              if (loading) return <Table loading />
+              if (error) return `Error: ${error.message}`
+
+              let storeNames = data.stores.map(s => s.name)
+
+              if (this.state.filterWord) {
+                storeNames = this.state.filterChoice
+              }
+
+              return (
+                <AutoComplete
+                  dataSource={storeNames}
+                  style={{ width: '100%' }}
+                  onSelect={value => this.changeStore(value, data.stores)}
+                  onSearch={value => this.handleSearch(value, storeNames)}
+                />
+              )
+            }}
+          </Query>
           <p className="m-t-16 m-b-16">Type</p>
           <Select
             defaultValue={this.state.type}
