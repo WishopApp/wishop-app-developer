@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-static'
-import { Query } from 'react-apollo'
+import { Query, Mutation } from 'react-apollo'
 import moment from 'moment'
 import {
   Table,
@@ -14,14 +14,19 @@ import {
   List,
   Row,
   Col,
+  notification,
+  Popconfirm,
 } from 'antd'
 import { BEACONS } from '../../graphql/query/beacon'
 import { STORES } from '../../graphql/query/store'
+import {
+  ASSIGN_BEACON_TO_STORE,
+  UPDATE_BEACON,
+} from '../../graphql/mutation/beacon'
 
 const Option = Select.Option
 
 export default class CategoryTable extends Component {
-  s
   state = {
     visible: false,
     detailVisible: false,
@@ -31,6 +36,7 @@ export default class CategoryTable extends Component {
     locationY: '',
     filterChoice: [],
     filterWord: '',
+    beaconId: '',
     storeId: '',
   }
 
@@ -49,10 +55,6 @@ export default class CategoryTable extends Component {
     this.setState({
       storeId: filteredStore[0]._id,
     })
-  }
-
-  assignTo = () => {
-    console.log(this.state.storeId)
   }
 
   render() {
@@ -108,7 +110,13 @@ export default class CategoryTable extends Component {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
-        render: () => <Badge status="processing" text="NEW" />,
+        render: status => (
+          <div>
+            {status === 'IDLE' && <Badge status="success" text="Idle" />}
+            {status === 'INUSE' && <Badge status="processing" text="Inused" />}
+            {status === 'EXPIRE' && <Badge status="error" text="Expired" />}
+          </div>
+        ),
       },
       {
         title: 'Action',
@@ -125,12 +133,90 @@ export default class CategoryTable extends Component {
             >
               DETAIL
             </a>
-            <Divider type="vertical" />
-            <a onClick={() => this.setState({ visible: true })}>ASSIGN</a>
-            <Divider type="vertical" />
-            <Link to="#">DE ASSIGN</Link>
-            <Divider type="vertical" />
-            <Button type="danger">CLOSE</Button>
+            {record.status === 'IDLE' && <Divider type="vertical" />}
+            {record.status === 'IDLE' && (
+              <a
+                onClick={() =>
+                  this.setState({ visible: true, beaconId: record._id })
+                }
+              >
+                ASSIGN
+              </a>
+            )}
+
+            {record.status === 'INUSE' && <Divider type="vertical" />}
+            {record.status === 'INUSE' && (
+              <Mutation mutation={UPDATE_BEACON}>
+                {(updateBeacon, _) => (
+                  <Popconfirm
+                    title="Are you sure?"
+                    onConfirm={async () => {
+                      try {
+                        await updateBeacon({
+                          variables: {
+                            id: record._id,
+                            assignId: '',
+                            status: 'IDLE',
+                          },
+                        })
+
+                        notification.success({
+                          message: 'Success',
+                          description: 'Beacon has been de-assigned.',
+                        })
+                      } catch (err) {
+                        notification.error({
+                          message: 'Error',
+                          description:
+                            'Please check your information or try again later.',
+                        })
+                      }
+                    }}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <a>DE-ASSIGN</a>
+                  </Popconfirm>
+                )}
+              </Mutation>
+            )}
+
+            {record.status !== 'EXPIRE' && <Divider type="vertical" />}
+            {record.status !== 'EXPIRE' && (
+              <Mutation mutation={UPDATE_BEACON}>
+                {(updateBeacon, _) => (
+                  <Popconfirm
+                    title="Are you sure?"
+                    onConfirm={async () => {
+                      try {
+                        await updateBeacon({
+                          variables: {
+                            id: record._id,
+                            assignId: '',
+                            status: 'EXPIRE',
+                          },
+                        })
+
+                        notification.success({
+                          message: 'Success',
+                          description: 'Beacon has been updated to expired.',
+                        })
+                      } catch (err) {
+                        notification.error({
+                          message: 'Error',
+                          description:
+                            'Please check your information or try again later.',
+                        })
+                      }
+                    }}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button type="danger">CLOSE</Button>
+                  </Popconfirm>
+                )}
+              </Mutation>
+            )}
           </div>
         ),
       },
@@ -173,7 +259,7 @@ export default class CategoryTable extends Component {
                       {item.type === 'IDLE' && (
                         <Badge status="success" text={item.title} />
                       )}
-                      {item.type === 'EXPIRED' && (
+                      {item.type === 'EXPIRE' && (
                         <Badge status="error" text={item.title} />
                       )}
                     </Col>
@@ -189,58 +275,88 @@ export default class CategoryTable extends Component {
           </Row>
         </Modal>
 
-        <Modal
-          title="ASSIGN TO"
-          visible={this.state.visible}
-          onOk={this.assignTo}
-          onCancel={() => this.setState({ visible: false })}
-          cancelText="CLOSE"
-          okText="SAVE"
-        >
-          <p className="m-b-16">Assign to</p>
-          <Query query={STORES}>
-            {({ loading, error, data }) => {
-              if (loading) return <Table loading />
-              if (error) return `Error: ${error.message}`
+        <Mutation mutation={ASSIGN_BEACON_TO_STORE}>
+          {(assignBeaconToStore, _) => (
+            <Modal
+              title="ASSIGN TO"
+              visible={this.state.visible}
+              onOk={async () => {
+                try {
+                  await assignBeaconToStore({
+                    variables: {
+                      id: this.state.beaconId,
+                      assignId: this.state.storeId,
+                    },
+                  })
 
-              let storeNames = data.stores.map(s => s.name)
+                  this.setState({
+                    visible: false,
+                    beaconId: '',
+                    storeId: '',
+                  })
 
-              if (this.state.filterWord) {
-                storeNames = this.state.filterChoice
-              }
+                  notification.success({
+                    message: 'Success',
+                    description: 'Beacon has been assigned.',
+                  })
+                } catch (err) {
+                  notification.error({
+                    message: 'Error',
+                    description:
+                      'Please check your information or try again later.',
+                  })
+                }
+              }}
+              onCancel={() => this.setState({ visible: false })}
+              cancelText="CLOSE"
+              okText="SAVE"
+            >
+              <p className="m-b-16">Assign to</p>
+              <Query query={STORES}>
+                {({ loading, error, data }) => {
+                  if (loading) return <Table loading />
+                  if (error) return `Error: ${error.message}`
 
-              return (
-                <AutoComplete
-                  dataSource={storeNames}
-                  style={{ width: '100%' }}
-                  onSelect={value => this.changeStore(value, data.stores)}
-                  onSearch={value => this.handleSearch(value, storeNames)}
-                />
-              )
-            }}
-          </Query>
-          <p className="m-t-16 m-b-16">Type</p>
-          <Select
-            defaultValue={this.state.type}
-            style={{ width: '100%' }}
-            onChange={type => this.setState({ type })}
-          >
-            <Option value="INDOOR">Indoor</Option>
-            <Option value="STICKER">Sticker</Option>
-          </Select>
-          <p className="m-t-16 m-b-16">Location X</p>
-          <Input
-            type="number"
-            value={this.state.locationX}
-            onChange={e => this.setState({ locationX: e.target.value })}
-          />
-          <p className="m-t-16 m-b-16">Location Y</p>
-          <Input
-            type="number"
-            value={this.state.locationY}
-            onChange={e => this.setState({ locationY: e.target.value })}
-          />
-        </Modal>
+                  let storeNames = data.stores.map(s => s.name)
+
+                  if (this.state.filterWord) {
+                    storeNames = this.state.filterChoice
+                  }
+
+                  return (
+                    <AutoComplete
+                      dataSource={storeNames}
+                      style={{ width: '100%' }}
+                      onSelect={value => this.changeStore(value, data.stores)}
+                      onSearch={value => this.handleSearch(value, storeNames)}
+                    />
+                  )
+                }}
+              </Query>
+              <p className="m-t-16 m-b-16">Type</p>
+              <Select
+                defaultValue={this.state.type}
+                style={{ width: '100%' }}
+                onChange={type => this.setState({ type })}
+              >
+                <Option value="INDOOR">Indoor</Option>
+                <Option value="STICKER">Sticker</Option>
+              </Select>
+              <p className="m-t-16 m-b-16">Location X</p>
+              <Input
+                type="number"
+                value={this.state.locationX}
+                onChange={e => this.setState({ locationX: e.target.value })}
+              />
+              <p className="m-t-16 m-b-16">Location Y</p>
+              <Input
+                type="number"
+                value={this.state.locationY}
+                onChange={e => this.setState({ locationY: e.target.value })}
+              />
+            </Modal>
+          )}
+        </Mutation>
       </div>
     )
   }

@@ -45,3 +45,27 @@ export const CREATE_BEACON = gql`
     }
   }
 `
+
+export const ASSIGN_BEACON_TO_STORE = gql`
+  mutation AssignBeaconToStore($id: ID!, $assignId: ID!) {
+    assignBeaconToStore(_id: $id, assignId: $assignId) {
+      _id
+    }
+  }
+`
+
+export const ASSIGN_BEACON_TO_PRODUCT = gql`
+  mutation AssignBeaconToProduct($id: ID!, $assignId: ID!) {
+    assignBeaconToProduct(_id: $id, assignId: $assignId) {
+      _id
+    }
+  }
+`
+
+export const UPDATE_BEACON = gql`
+  mutation UpdateBeacon($id: ID!, $assignId: ID, $status: BEACON_STATUSES) {
+    updateBeacon(_id: $id, status: $status, assignId: $assignId) {
+      _id
+    }
+  }
+`
