@@ -59,3 +59,14 @@ export const BEACON = gql`
     }
   }
 `
+
+export const BEACON_STATISTIC = gql`
+  query BeaconStatistic {
+    beaconStatistic {
+      idle
+      inuse
+      expire
+      total
+    }
+  }
+`
