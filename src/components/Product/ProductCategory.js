@@ -22,7 +22,7 @@ export default class ProductCategory extends Component {
                 className="m-b-32"
               />
               <Col span={24} style={{ textAlign: 'center' }}>
-                <p>Shoe</p>
+                <p>{this.props.category.name}</p>
               </Col>
             </Row>
             <Row type="flex" justify="center" className="m-b-16">
@@ -37,7 +37,7 @@ export default class ProductCategory extends Component {
                 className="m-b-32"
               />
               <Col span={24} style={{ textAlign: 'center' }}>
-                <p>Sneaker</p>
+                <p>{this.props.subCategory.name}</p>
               </Col>
             </Row>
           </Card>

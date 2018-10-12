@@ -8,18 +8,30 @@ export default class ProductDetail extends Component {
         <Col span={24}>
           <h3>PRODUCT DETAIL</h3>
           <Card className="m-t-16">
-            <Row type="flex" justify="space-between" className="m-b-16">
-              <h4>NAME: </h4>
-              <p>Product name</p>
-            </Row>
-            <Row type="flex" justify="space-between" className="m-b-16">
-              <h4>COLOR: </h4>
-              <p>Red</p>
-            </Row>
-            <Row type="flex" justify="space-between" className="m-b-16">
-              <h4>SIZE: </h4>
-              <p>20 (US)</p>
-            </Row>
+            {this.props.categoryProps.length !== 0 &&
+              this.props.categoryProps.map((cp, index) => (
+                <Row
+                  type="flex"
+                  justify="space-between"
+                  className="m-b-16"
+                  key={index}
+                >
+                  <h4>{cp.name}: </h4>
+                  <p>{cp.value}</p>
+                </Row>
+              ))}
+            {this.props.subCategoryProps.length !== 0 &&
+              this.props.subCategoryProps.map((scp, index) => (
+                <Row
+                  type="flex"
+                  justify="space-between"
+                  className="m-b-16"
+                  key={index}
+                >
+                  <h4>{scp.name}: </h4>
+                  <p>{scp.value}</p>
+                </Row>
+              ))}
           </Card>
         </Col>
       </Row>

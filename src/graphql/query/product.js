@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const PRODUCTS = gql`
-  query Product {
+  query Products {
     products {
       _id
       name
@@ -13,6 +13,40 @@ export const PRODUCTS = gql`
       }
       store {
         name
+      }
+      createdAt
+      status
+    }
+  }
+`
+
+export const PRODUCT = gql`
+  query Product($id: ID!) {
+    product(_id: $id) {
+      _id
+      name
+      category {
+        name
+      }
+      subCategory {
+        name
+      }
+      store {
+        name
+        owner {
+          profile {
+            name
+            telNo
+          }
+        }
+      }
+      categoryProps {
+        name
+        value
+      }
+      subCategoryProps {
+        name
+        value
       }
       createdAt
       status

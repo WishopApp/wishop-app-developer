@@ -54,7 +54,18 @@ export default class StoreDetail extends Component {
         <Col span={24} className="m-b-32">
           <h3>STORE DETAIL</h3>
           <Card className="m-t-16">
-            <h4>Title: </h4>
+            <Row type="flex" justify="space-between" className="m-b-16">
+              <h4>Title: </h4>
+              <p>{this.props.store.name}</p>
+            </Row>
+            <Row type="flex" justify="space-between" className="m-b-16">
+              <h4>Owned by: </h4>
+              <p>{this.props.store.owner.profile.name}</p>
+            </Row>
+            <Row type="flex" justify="space-between">
+              <h4>Tel No: </h4>
+              <p>{this.props.store.owner.profile.telNo}</p>
+            </Row>
           </Card>
         </Col>
         <Col span={24}>
@@ -62,7 +73,7 @@ export default class StoreDetail extends Component {
           <Card className="m-t-16">
             <p>
               If you ban this product, this product will not appear in the
-              system and you have to tell store the reason{' '}
+              system and you have to tell store the reason
             </p>
             <Button
               type="danger"
