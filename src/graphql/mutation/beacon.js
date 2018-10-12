@@ -69,3 +69,11 @@ export const UPDATE_BEACON = gql`
     }
   }
 `
+
+export const UPDATE_BEACON_TICKET = gql`
+  mutation UpdateBeaconTicket($id: ID!, $status: BEACON_TICKET_STATUSES) {
+    updateBeaconTicket(_id: $id, status: $status) {
+      _id
+    }
+  }
+`

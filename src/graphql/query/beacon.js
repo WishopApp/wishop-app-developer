@@ -70,3 +70,34 @@ export const BEACON_STATISTIC = gql`
     }
   }
 `
+
+export const BEACON_TICKETS = gql`
+  query BeaconTickets(
+    $storeId: ID
+    $status: BEACON_TICKET_STATUSES
+    $type: BEACON_TICKET_TYPES
+  ) {
+    beaconRequestTickets(storeId: $storeId, status: $status, type: $type) {
+      _id
+      storeId
+      telNo
+      type
+      status
+      createdAt
+      store {
+        name
+      }
+    }
+  }
+`
+
+export const BEACON_TICKET_STATISTIC = gql`
+  query BeaconTicketStatistic {
+    beaconTicketStatistic {
+      new
+      complete
+      reject
+      total
+    }
+  }
+`
