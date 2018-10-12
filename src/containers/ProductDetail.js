@@ -11,14 +11,11 @@ import ProductCategory from '../components/Product/ProductCategory'
 
 class ProductDetail extends Component {
   render() {
-    console.log(this.props.match.params)
     return (
       <Query query={PRODUCT} variables={{ id: this.props.match.params.id }}>
         {({ loading, error, data }) => {
           if (loading) return <Card loading />
           if (error) return `Error: ${error.message}`
-
-          console.log(data.product)
 
           return (
             <Row gutter={16}>
