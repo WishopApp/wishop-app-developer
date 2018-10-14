@@ -21,71 +21,29 @@ export default class ProfileDetail extends Component {
               <Col span={12}>
                 <Row type="flex" justify="space-between" className="m-b-16">
                   <h4>NAME: </h4>
-                  <p>Product name</p>
+                  <p>{this.props.user.profile.name}</p>
                 </Row>
                 <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
+                  <h4>TEL NO: </h4>
+                  <p>{this.props.user.profile.telNo}</p>
                 </Row>
                 <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
+                  <h4>EMAIL: </h4>
+                  <p>{this.props.user.email}</p>
                 </Row>
                 <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
+                  <h4>ADDRESS: </h4>
+                  <p>
+                    {this.props.user.profile.address.district}
+                    {this.props.user.profile.address.province}
+                    {this.props.user.profile.address.country}
+                    {this.props.user.profile.address.zipcode}
+                    {this.props.user.profile.address.detail}
+                  </p>
                 </Row>
               </Col>
             </Row>
           </Card>
-        </Col>
-        <Col span={24} className="m-t-32">
-          <h3>STORE DETAIL</h3>
-          <Card className="m-t-16">
-            <Row gutter={16} type="flex" align="middle">
-              <Col span={6} style={{ marginRight: 100 }}>
-                <img
-                  src={ExImg}
-                  alt="OK"
-                  style={{ width: '100%', padding: 20 }}
-                />
-              </Col>
-              <Col span={12}>
-                <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
-                </Row>
-                <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
-                </Row>
-                <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
-                </Row>
-                <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
-                </Row>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-        <Col span={24} className="m-t-16">
-          <Row gutter={16}>
-            <Col span={12} style={{ textAlign: 'center' }}>
-              <Card>
-                <h4>PRODUCTS</h4>
-                <h3>100</h3>
-              </Card>
-            </Col>
-            <Col span={12} style={{ textAlign: 'center' }}>
-              <Card>
-                <h4>BRANCH</h4>
-                <h3>100</h3>
-              </Card>
-            </Col>
-          </Row>
         </Col>
       </Row>
     )
