@@ -49,12 +49,20 @@ export default class StoreDetail extends Component {
   }
 
   render() {
+    console.log(this.props.owner)
     return (
       <Row>
         <Col span={24} className="m-b-32">
           <h3>OWNER DETAIL</h3>
           <Card className="m-t-16">
-            <h4>Title: </h4>
+            <Row type="flex" justify="space-between" className="m-b-16">
+              <h4>NAME: </h4>
+              <p>{this.props.owner.profile.name}</p>
+            </Row>
+            <Row type="flex" justify="space-between" className="m-b-16">
+              <h4>TEL NO: </h4>
+              <p>{this.props.owner.profile.telNo}</p>
+            </Row>
           </Card>
         </Col>
         <Col span={24}>

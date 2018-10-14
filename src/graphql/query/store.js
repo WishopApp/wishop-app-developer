@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const STORES = gql`
-  query Store {
+  query Stores {
     stores {
       _id
       name
@@ -23,6 +23,42 @@ export const STORE_STATISTIC = gql`
       closed
       banned
       total
+    }
+  }
+`
+
+export const STORE = gql`
+  query Store($id: ID) {
+    store(_id: $id) {
+      _id
+      name
+      description
+      coverUrl
+      status
+      owner {
+        _id
+        profile {
+          name
+          telNo
+        }
+      }
+      beacons {
+        _id
+        name
+        status
+        createdAt
+      }
+      products {
+        _id
+        name
+        status
+        createdAt
+      }
+      branchs {
+        _id
+        name
+        telNo
+      }
     }
   }
 `

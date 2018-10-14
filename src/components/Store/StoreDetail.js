@@ -21,19 +21,15 @@ export default class StoreDetail extends Component {
               <Col span={12}>
                 <Row type="flex" justify="space-between" className="m-b-16">
                   <h4>NAME: </h4>
-                  <p>Product name</p>
+                  <p>{this.props.store.name}</p>
                 </Row>
                 <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
+                  <h4>DESCRIPTION: </h4>
+                  <p>{this.props.store.description}</p>
                 </Row>
                 <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
-                </Row>
-                <Row type="flex" justify="space-between" className="m-b-16">
-                  <h4>NAME: </h4>
-                  <p>Product name</p>
+                  <h4>STATUS: </h4>
+                  <p>{this.props.store.status}</p>
                 </Row>
               </Col>
             </Row>
