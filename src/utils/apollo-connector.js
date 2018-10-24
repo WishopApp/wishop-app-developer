@@ -7,7 +7,7 @@ import fetch from 'node-fetch'
 
 const httpLink = createHttpLink({
   fetch,
-  uri: `${process.env.API_URL}/graphql`,
+  uri: `${process.env.API_URL}`,
 })
 
 const authLink = setContext((_, { headers }) => {
