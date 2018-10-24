@@ -3,11 +3,15 @@ import { Link } from 'react-static'
 import { Table, Badge } from 'antd'
 import moment from 'moment'
 
+import ExamplePhoto from '../ExamplePhoto'
+
 const columns = [
   {
     title: 'Exmaple Image',
-    dataIndex: 'image',
-    key: 'image',
+    dataIndex: 'photoUrlList',
+    key: 'photoUrlList',
+    width: 150,
+    render: photoUrlList => <ExamplePhoto img={photoUrlList[0]} />,
   },
   {
     title: 'Name',

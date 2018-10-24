@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Row, Col, Card } from 'antd'
 
-import ExImg from '../../../public/logo/app-logo-no-title.svg'
+import ExamplePhoto from '../ExamplePhoto'
 
 export default class StoreDetail extends Component {
   render() {
@@ -12,11 +12,7 @@ export default class StoreDetail extends Component {
           <Card className="m-t-16">
             <Row gutter={16} type="flex" align="middle">
               <Col span={6} style={{ marginRight: 100 }}>
-                <img
-                  src={ExImg}
-                  alt="Image"
-                  style={{ width: '100%', padding: 20 }}
-                />
+                <ExamplePhoto img={this.props.store.avatarUrl} />
               </Col>
               <Col span={12}>
                 <Row type="flex" justify="space-between" className="m-b-16">

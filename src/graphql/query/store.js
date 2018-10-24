@@ -5,6 +5,8 @@ export const STORES = gql`
     stores {
       _id
       name
+      avatarUrl
+      status
       owner {
         _id
         email
@@ -33,7 +35,7 @@ export const STORE = gql`
       _id
       name
       description
-      coverUrl
+      avatarUrl
       status
       owner {
         _id
@@ -52,6 +54,7 @@ export const STORE = gql`
         _id
         name
         status
+        photoUrlList
         createdAt
       }
       branchs {

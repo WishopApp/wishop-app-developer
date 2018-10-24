@@ -2,13 +2,18 @@ import React, { Component } from 'react'
 import { Link } from 'react-static'
 import { Table, Badge } from 'antd'
 import { Query } from 'react-apollo'
+import moment from 'moment'
+
 import { STORES } from '../../graphql/query/store'
+import ExamplePhoto from '../ExamplePhoto'
 
 const columns = [
   {
     title: 'Exmaple Image',
-    dataIndex: 'image',
-    key: 'image',
+    dataIndex: 'avatarUrl',
+    key: 'avatarUrl',
+    width: 150,
+    render: avatarUrl => <ExamplePhoto img={avatarUrl} />,
   },
   {
     title: 'Name',
@@ -25,12 +30,26 @@ const columns = [
     title: 'Created At',
     dataIndex: 'createdAt',
     key: 'createdAt',
+    align: 'center',
+    render: createdAt => (
+      <div>
+        {moment(createdAt).format('DD-MM-YYYY')}
+        <br />
+        {moment(createdAt).format('HH:mm')}
+      </div>
+    ),
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: () => <Badge status="success" text="Available" />,
+    render: status => (
+      <div>
+        {status === 'OPEN' && <Badge status="success" text="Open" />}
+        {status === 'CLOSED' && <Badge status="warning" text="Closed" />}
+        {status === 'BANNED' && <Badge status="error" text="Banned" />}
+      </div>
+    ),
   },
   {
     title: 'Action',
