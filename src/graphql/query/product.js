@@ -5,6 +5,7 @@ export const PRODUCTS = gql`
     products {
       _id
       name
+      photoUrlList
       category {
         name
       }
@@ -25,6 +26,7 @@ export const PRODUCT = gql`
     product(_id: $id) {
       _id
       name
+      photoUrlList
       category {
         name
       }

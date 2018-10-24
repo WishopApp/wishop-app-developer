@@ -17,6 +17,8 @@ class ProductDetail extends Component {
           if (loading) return <Card loading />
           if (error) return `Error: ${error.message}`
 
+          console.log(data.product)
+
           return (
             <Row gutter={16}>
               <Col span={24}>
@@ -24,7 +26,7 @@ class ProductDetail extends Component {
                   <Col span={16}>
                     <Row gutter={16}>
                       <Col span={24}>
-                        <ProductImages images={data.product.images} />
+                        <ProductImages images={data.product.photoUrlList} />
                       </Col>
                       <Col span={12} className="m-t-32">
                         <ProductDetailCard

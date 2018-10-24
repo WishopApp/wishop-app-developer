@@ -2,13 +2,18 @@ import React, { Component } from 'react'
 import { Link } from 'react-static'
 import { Table, Badge } from 'antd'
 import { Query } from 'react-apollo'
+import moment from 'moment'
+
 import { PRODUCTS } from '../../graphql/query/product'
+import ExamplePhoto from '../ExamplePhoto'
 
 const columns = [
   {
     title: 'Example Image',
-    dataIndex: 'image',
-    key: 'image',
+    dataIndex: 'photoUrlList',
+    key: 'photoUrlList',
+    width: 150,
+    render: photoUrlList => <ExamplePhoto img={photoUrlList[0]} />,
   },
   {
     title: 'Name',
@@ -22,20 +27,35 @@ const columns = [
     render: category => <p>{category.name}</p>,
   },
   {
+    title: 'Sub category',
+    dataIndex: 'subCategory',
+    key: 'subCategory',
+    render: subCategory => <p>{subCategory.name}</p>,
+  },
+  {
     title: 'Store',
     dataIndex: 'store',
     key: 'store',
     render: store => <p>{store.name}</p>,
   },
   {
-    title: 'Created At',
+    title: 'Registerd At',
     dataIndex: 'createdAt',
     key: 'createdAt',
+    align: 'center',
+    render: createdAt => (
+      <div>
+        {moment(createdAt).format('DD-MM-YYYY')}
+        <br />
+        {moment(createdAt).format('HH:mm')}
+      </div>
+    ),
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
+    align: 'center',
     render: status => {
       if (status === 'AVAILABLE')
         return <Badge status="success" text="Available" />
@@ -46,6 +66,7 @@ const columns = [
   {
     title: 'Action',
     key: 'action',
+    align: 'center',
     render: (text, record) => <Link to={`/product/${record._id}`}>MORE</Link>,
   },
 ]
