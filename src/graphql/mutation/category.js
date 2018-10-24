@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const CREATE_CATEGORY = gql`
-  mutation createCategory($name: String!) {
-    createCategory(name: $name) {
+  mutation createCategory($name: String!, $logo: String!) {
+    createCategory(name: $name, logo: $logo) {
       _id
     }
   }
@@ -21,8 +21,8 @@ export const CREATE_CATEGORY_PROP = gql`
 `
 
 export const UPDATE_CATEGORY = gql`
-  mutation updateCategory($id: ID!, $name: String!) {
-    updateCategory(_id: $id, name: $name) {
+  mutation updateCategory($id: ID!, $name: String!, $logo: String) {
+    updateCategory(_id: $id, name: $name, logo: $logo) {
       _id
       name
     }

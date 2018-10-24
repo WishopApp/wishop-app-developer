@@ -5,6 +5,7 @@ export const CATEGORIES = gql`
     categories(limit: $limit, skip: $skip) {
       _id
       name
+      logo
       properties {
         _id
         categoryId

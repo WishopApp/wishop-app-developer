@@ -6,6 +6,9 @@ import {
   UPDATE_CATEGORY,
   UPDATE_CATEGORY_PROP,
 } from '../../graphql/mutation/category'
+import ImageUpload from '../../components/ImageUpload'
+import axios from '../../utils/axios-creator'
+import ExamplePhoto from '../../components/ExamplePhoto'
 
 class CategoryTable extends Component {
   state = {
@@ -13,6 +16,8 @@ class CategoryTable extends Component {
     cateName: '',
     category: {},
     properties: [{ _id: '', name: '', values: [''] }],
+    logo: '',
+    newLogo: '',
   }
 
   addProp = () => {
@@ -83,10 +88,26 @@ class CategoryTable extends Component {
 
   updateCategory = async () => {
     try {
+      let newLogo
+
+      if (this.state.newLogo) {
+        const formData = new FormData()
+        formData.append('photo', this.state.newLogo)
+
+        const headers = {
+          'content-type': 'multipart/form-data',
+        }
+
+        const resp = await axios.post('/upload', formData, headers)
+
+        newLogo = resp.data.result.fileLocation
+      }
+
       await this.props.updateCategory({
         variables: {
           id: this.state.category._id,
           name: this.state.cateName,
+          logo: newLogo,
         },
       })
 
@@ -116,9 +137,17 @@ class CategoryTable extends Component {
   render() {
     const columns = [
       {
+        title: 'Logo',
+        dataIndex: 'logo',
+        key: 'logo',
+        width: 150,
+        render: logo => <ExamplePhoto img={logo} />,
+      },
+      {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
+        align: 'center',
       },
       {
         title: 'Action',
@@ -132,6 +161,7 @@ class CategoryTable extends Component {
                   cateName: record.name,
                   category: record,
                   properties: record.properties,
+                  logo: record.logo,
                 })
               }}
             >
@@ -155,6 +185,12 @@ class CategoryTable extends Component {
           okText="SAVE CHANGE"
           cancelText="CLOSE"
         >
+          <p className="m-b-16">Logo</p>
+          <ImageUpload
+            name="newLogo"
+            img={this.state.logo}
+            onChange={(key, value) => this.setState({ [key]: value })}
+          />
           <p className="m-b-16">Name</p>
           <Input
             type="text"

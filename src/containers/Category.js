@@ -1,13 +1,31 @@
 import React, { Component } from 'react'
-import { Row, Col, Card, Button, Icon, Modal, AutoComplete, Input, Divider } from 'antd'
+import {
+  Row,
+  Col,
+  Card,
+  Button,
+  Icon,
+  Modal,
+  AutoComplete,
+  Input,
+  Divider,
+} from 'antd'
 import { Mutation, Query } from 'react-apollo'
 
 import CategoryTable from '../components/Category/CategoryTable'
 import SubCategoryTable from '../components/Category/SubCategoryTable'
-import { CREATE_CATEGORY, CREATE_CATEGORY_PROP } from '../graphql/mutation/category'
-import { CREATE_SUB_CATEGORY, CREATE_SUB_CATEGORY_PROP } from '../graphql/mutation/sub-category'
+import {
+  CREATE_CATEGORY,
+  CREATE_CATEGORY_PROP,
+} from '../graphql/mutation/category'
+import {
+  CREATE_SUB_CATEGORY,
+  CREATE_SUB_CATEGORY_PROP,
+} from '../graphql/mutation/sub-category'
 import { CATEGORIES } from '../graphql/query/category'
 import { SUB_CATEGORIES } from '../graphql/query/sub-category'
+import ImageUpload from '../components/ImageUpload'
+import axios from '../utils/axios-creator'
 
 class Category extends Component {
   state = {
@@ -17,24 +35,41 @@ class Category extends Component {
     cateProps: [{ name: '', choices: [''] }],
     subCateName: '',
     categoryId: '',
+    logo: '',
   }
 
   createCategory = async e => {
     try {
       e.preventDefault()
 
+      const formData = new FormData()
+      formData.append('photo', this.state.logo)
+
+      const headers = {
+        'content-type': 'multipart/form-data',
+      }
+
+      const resp = await axios.post('/upload', formData, headers)
+
       const {
         data: { createCategory },
       } = await this.props.createCategory({
-        variables: { name: this.state.cateName },
+        variables: {
+          name: this.state.cateName,
+          logo: resp.data.result.fileLocation,
+        },
       })
 
       Promise.all(
         await this.state.cateProps.map(p => {
           return this.props.createCategoryProp({
-            variables: { categoryId: createCategory._id, name: p.name, values: p.choices },
+            variables: {
+              categoryId: createCategory._id,
+              name: p.name,
+              values: p.choices,
+            },
           })
-        }),
+        })
       )
 
       this.setState({
@@ -54,15 +89,22 @@ class Category extends Component {
       const {
         data: { createSubCategory },
       } = await this.props.createSubCategory({
-        variables: { categoryId: this.state.categoryId, name: this.state.subCateName },
+        variables: {
+          categoryId: this.state.categoryId,
+          name: this.state.subCateName,
+        },
       })
 
       Promise.all(
         await this.state.cateProps.map(p => {
           return this.props.createSubCategoryProp({
-            variables: { subCategoryId: createSubCategory._id, name: p.name, values: p.choices },
+            variables: {
+              subCategoryId: createSubCategory._id,
+              name: p.name,
+              values: p.choices,
+            },
           })
-        }),
+        })
       )
 
       this.setState({
@@ -169,7 +211,10 @@ class Category extends Component {
           <Col span={24}>
             <Card className="m-t-16">
               <Row type="flex" justify="end" className="m-b-16">
-                <Button type="primary" onClick={() => this.setState({ cateVisible: true })}>
+                <Button
+                  type="primary"
+                  onClick={() => this.setState({ cateVisible: true })}
+                >
                   <Icon type="plus" />
                   ADD NEW
                 </Button>
@@ -193,7 +238,10 @@ class Category extends Component {
           <Col span={24}>
             <Card className="m-t-16">
               <Row type="flex" justify="end" className="m-b-16">
-                <Button type="primary" onClick={() => this.setState({ subCateVisible: true })}>
+                <Button
+                  type="primary"
+                  onClick={() => this.setState({ subCateVisible: true })}
+                >
                   <Icon type="plus" />
                   ADD NEW
                 </Button>
@@ -218,6 +266,11 @@ class Category extends Component {
           okText="CREATE"
           cancelText="CLOSE"
         >
+          <p className="m-b-16">Logo</p>
+          <ImageUpload
+            name="logo"
+            onChange={(key, value) => this.setState({ [key]: value })}
+          />
           <p className="m-b-16">Name</p>
           <Input
             type="text"
@@ -230,7 +283,10 @@ class Category extends Component {
               <Row type="flex" justify="space-between">
                 <p>Property {propIndex + 1}</p>
                 {propIndex !== 0 && (
-                  <Button type="danger" onClick={() => this.removeProp(propIndex)}>
+                  <Button
+                    type="danger"
+                    onClick={() => this.removeProp(propIndex)}
+                  >
                     <Icon type="minus" />
                     <span>DELETE</span>
                   </Button>
@@ -251,7 +307,11 @@ class Category extends Component {
                         type="text"
                         value={c}
                         onChange={e =>
-                          this.changeCateChoice(e.target.value, propIndex, choiceIndex)
+                          this.changeCateChoice(
+                            e.target.value,
+                            propIndex,
+                            choiceIndex
+                          )
                         }
                         className="m-b-16"
                       />
@@ -260,7 +320,9 @@ class Category extends Component {
                       <Col span={2}>
                         <Button
                           type="danger"
-                          onClick={() => this.removeCateChoice(propIndex, choiceIndex)}
+                          onClick={() =>
+                            this.removeCateChoice(propIndex, choiceIndex)
+                          }
                         >
                           <Icon type="minus" />
                         </Button>
@@ -314,7 +376,10 @@ class Category extends Component {
               <Row type="flex" justify="space-between">
                 <p>Property {propIndex + 1}</p>
                 {propIndex !== 0 && (
-                  <Button type="danger" onClick={() => this.removeProp(propIndex)}>
+                  <Button
+                    type="danger"
+                    onClick={() => this.removeProp(propIndex)}
+                  >
                     <Icon type="minus" />
                     <span>DELETE</span>
                   </Button>
@@ -335,7 +400,11 @@ class Category extends Component {
                         type="text"
                         value={c}
                         onChange={e =>
-                          this.changeCateChoice(e.target.value, propIndex, choiceIndex)
+                          this.changeCateChoice(
+                            e.target.value,
+                            propIndex,
+                            choiceIndex
+                          )
                         }
                         className="m-b-16"
                       />
@@ -344,7 +413,9 @@ class Category extends Component {
                       <Col span={2}>
                         <Button
                           type="danger"
-                          onClick={() => this.removeCateChoice(propIndex, choiceIndex)}
+                          onClick={() =>
+                            this.removeCateChoice(propIndex, choiceIndex)
+                          }
                         >
                           <Icon type="minus" />
                         </Button>
@@ -377,7 +448,9 @@ class Category extends Component {
 
 const CategoryMutation = props => (
   <Mutation mutation={CREATE_CATEGORY}>
-    {(createCategory, _) => <Category createCategory={createCategory} {...props} />}
+    {(createCategory, _) => (
+      <Category createCategory={createCategory} {...props} />
+    )}
   </Mutation>
 )
 
@@ -400,7 +473,10 @@ const CategoryMutation3 = props => (
 const CategoryMutation4 = props => (
   <Mutation mutation={CREATE_SUB_CATEGORY_PROP}>
     {(createSubCategoryProp, _) => (
-      <CategoryMutation3 createSubCategoryProp={createSubCategoryProp} {...props} />
+      <CategoryMutation3
+        createSubCategoryProp={createSubCategoryProp}
+        {...props}
+      />
     )}
   </Mutation>
 )

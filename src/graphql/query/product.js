@@ -29,6 +29,7 @@ export const PRODUCT = gql`
       photoUrlList
       category {
         name
+        logo
       }
       subCategory {
         name

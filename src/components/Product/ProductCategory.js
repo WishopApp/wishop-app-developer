@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { Row, Col, Card } from 'antd'
 
-import Icon from '../../../public/logo/app-logo-no-title.svg'
+import ExamplePhoto from '../ExamplePhoto'
 
 export default class ProductCategory extends Component {
   render() {
+    console.log(this.props)
+
     return (
       <Row>
         <Col span={24}>
@@ -14,28 +16,14 @@ export default class ProductCategory extends Component {
               <Col span={24} style={{ textAlign: 'center' }} className="m-b-32">
                 <h4>CATEGORY</h4>
               </Col>
-              <img
-                src={Icon}
-                alt=""
-                width="100"
-                height="100"
-                className="m-b-32"
-              />
+              <Col span={24} style={{ textAlign: 'center' }} className="m-b-32">
+                <ExamplePhoto img={this.props.category.logo} />
+              </Col>
               <Col span={24} style={{ textAlign: 'center' }}>
                 <p>{this.props.category.name}</p>
               </Col>
             </Row>
             <Row type="flex" justify="center" className="m-b-16">
-              <Col span={24} style={{ textAlign: 'center' }} className="m-b-32">
-                <h4>SUB CATEGORY</h4>
-              </Col>
-              <img
-                src={Icon}
-                alt=""
-                width="100"
-                height="100"
-                className="m-b-32"
-              />
               <Col span={24} style={{ textAlign: 'center' }}>
                 <p>{this.props.subCategory.name}</p>
               </Col>
