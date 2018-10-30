@@ -4,18 +4,18 @@ import { Row, Col, Card } from 'antd'
 import UserTable from '../components/User/UserTable'
 import UserStat from '../components/User/UserStat'
 
-class User extends Component {
+class ReportTicket extends Component {
   render() {
     return (
       <Row gutter={16}>
         <Col span={24} className="m-b-16">
-          <h3>USER STATISTIC</h3>
+          <h3>STATUS</h3>
         </Col>
         <Col span={24} className="m-b-32">
           <UserStat />
         </Col>
         <Col span={24} className="m-b-16">
-          <h3>USER LIST</h3>
+          <h3>REPORTS</h3>
         </Col>
         <Col span={24}>
           <Card className="m-t-16">
@@ -27,4 +27,4 @@ class User extends Component {
   }
 }
 
-export default User
+export default ReportTicket

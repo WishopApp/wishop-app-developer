@@ -46,6 +46,7 @@ class AppLayout extends Component {
       product: '3',
       store: '4',
       user: '5',
+      report: '6',
     }
 
     return listOfKeys[this.props.pageDetail.department]

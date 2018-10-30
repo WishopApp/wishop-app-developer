@@ -1,20 +1,9 @@
 import React, { Component } from 'react'
 import { Layout, Menu, Icon } from 'antd'
-import styled from 'styled-components'
 
 import Logo from '../../public/logo/app-logo-no-title.svg'
 
-const { Header, Sider } = Layout
-
-const SecondBar = styled(Header)`
-  box-shadow: 0px 6px 15px -4px #00000030;
-  z-index: 99;
-  height: 66px;
-
-  @media screen and (max-width: 767px) {
-    display: none;
-  }
-`
+const { Sider } = Layout
 
 export default class DesktopMenu extends Component {
   state = {
@@ -62,6 +51,10 @@ export default class DesktopMenu extends Component {
           <Menu.Item key="5" onClick={() => this.props.changePage('/user')}>
             <Icon type="team" theme="outlined" />
             <span>USER</span>
+          </Menu.Item>
+          <Menu.Item key="6" onClick={() => this.props.changePage('/report')}>
+            <Icon type="file-exclamation" theme="outlined" />
+            <span>ISSUE REPORT</span>
           </Menu.Item>
         </Menu>
       </Sider>
