@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Row, Col, Card } from 'antd'
 
 import UserTable from '../components/User/UserTable'
-import UserStat from '../components/User/UserStat'
+import ReportStat from '../components/Report/ReportStat'
 
 class ReportTicket extends Component {
   render() {
@@ -12,7 +12,7 @@ class ReportTicket extends Component {
           <h3>STATUS</h3>
         </Col>
         <Col span={24} className="m-b-32">
-          <UserStat />
+          <ReportStat />
         </Col>
         <Col span={24} className="m-b-16">
           <h3>REPORTS</h3>
