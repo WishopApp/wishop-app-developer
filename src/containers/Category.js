@@ -204,59 +204,73 @@ class Category extends Component {
 
     return (
       <Row gutter={16}>
-        <Col span={12}>
-          <Col span={24}>
-            <h3>CATEGORY</h3>
-          </Col>
-          <Col span={24}>
-            <Card className="m-t-16">
-              <Row type="flex" justify="end" className="m-b-16">
-                <Button
-                  type="primary"
-                  onClick={() => this.setState({ cateVisible: true })}
-                >
-                  <Icon type="plus" />
-                  ADD NEW
-                </Button>
-              </Row>
-              <Query query={CATEGORIES}>
-                {({ loading, error, data }) => {
-                  if (loading) return 'Loading...'
-                  if (error) return `Error! ${error.message}`
+        <Query query={CATEGORIES}>
+          {({ loading, error, data }) => {
+            if (loading) return 'Loading...'
+            if (error) return `Error! ${error.message}`
 
-                  return <CategoryTable dataSource={data.categories} />
-                }}
-              </Query>
-            </Card>
-          </Col>
-        </Col>
+            const categoryData = data.categories
 
-        <Col span={12}>
-          <Col span={24}>
-            <h3>SUB CATEGORY</h3>
-          </Col>
-          <Col span={24}>
-            <Card className="m-t-16">
-              <Row type="flex" justify="end" className="m-b-16">
-                <Button
-                  type="primary"
-                  onClick={() => this.setState({ subCateVisible: true })}
-                >
-                  <Icon type="plus" />
-                  ADD NEW
-                </Button>
-              </Row>
-              <Query query={SUB_CATEGORIES}>
-                {({ loading, error, data: { subCategories } }) => {
-                  if (loading) return 'Loading...'
-                  if (error) return `Error! ${error.message}`
+            return (
+              <Col>
+                <Col span={24}>
+                  <Col span={24}>
+                    <h3>CATEGORY</h3>
+                  </Col>
+                  <Col span={24}>
+                    <Card className="m-t-16">
+                      <Row type="flex" justify="end" className="m-b-16">
+                        <Button
+                          type="primary"
+                          onClick={() => this.setState({ cateVisible: true })}
+                        >
+                          <Icon type="plus" />
+                          ADD NEW
+                        </Button>
+                      </Row>
 
-                  return <SubCategoryTable dataSource={subCategories} />
-                }}
-              </Query>
-            </Card>
-          </Col>
-        </Col>
+                      <CategoryTable dataSource={data.categories} />
+                    </Card>
+                  </Col>
+                </Col>
+
+                <Col span={24} className="m-t-32">
+                  <Col span={24}>
+                    <h3>SUB CATEGORY</h3>
+                  </Col>
+                  <Col span={24}>
+                    <Card className="m-t-16">
+                      <Row type="flex" justify="end" className="m-b-16">
+                        <Button
+                          type="primary"
+                          onClick={() =>
+                            this.setState({ subCateVisible: true })
+                          }
+                        >
+                          <Icon type="plus" />
+                          ADD NEW
+                        </Button>
+                      </Row>
+                      <Query query={SUB_CATEGORIES}>
+                        {({ loading, error, data: { subCategories } }) => {
+                          if (loading) return 'Loading...'
+                          if (error) return `Error! ${error.message}`
+
+                          return (
+                            <SubCategoryTable
+                              dataSource={subCategories}
+                              categories={categoryData}
+                            />
+                          )
+                        }}
+                      </Query>
+                    </Card>
+                  </Col>
+                </Col>
+              </Col>
+            )
+          }}
+        </Query>
 
         <Modal
           title="NEW CATEGORY"

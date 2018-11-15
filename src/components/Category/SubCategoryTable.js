@@ -114,6 +114,12 @@ class SubCategoryTable extends Component {
   }
 
   render() {
+    console.log(this.props.categories)
+    const filterValues = this.props.categories.map(data => ({
+      text: data.name,
+      value: data.name,
+    }))
+
     const columns = [
       {
         title: 'Name',
@@ -124,6 +130,8 @@ class SubCategoryTable extends Component {
         title: 'Category',
         dataIndex: 'category',
         key: 'category',
+        filters: filterValues,
+        onFilter: (value, record) => record.category.name.includes(value),
         render: (text, record) => (
           <p>{record.category && record.category.name}</p>
         ),
