@@ -27,7 +27,9 @@ class Login extends Component {
             variables: { email: values.email, password: values.password },
           })
 
-          Cookies.set(process.env.AUTH_TOKEN_NAME, data.login, { expires: 7 })
+          Cookies.set(process.env.AUTH_TOKEN_NAME, data.adminLogin, {
+            expires: 7,
+          })
           this.props.history.push('/')
         } catch (err) {
           this.setState({ error: true, loading: false })
