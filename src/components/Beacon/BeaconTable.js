@@ -19,6 +19,7 @@ import {
 } from 'antd'
 import { BEACONS } from '../../graphql/query/beacon'
 import { STORES } from '../../graphql/query/store'
+import { STORE_BRANCHES } from '../../graphql/query/store-branch'
 import {
   ASSIGN_BEACON_TO_STORE,
   UPDATE_BEACON,
@@ -38,6 +39,7 @@ export default class CategoryTable extends Component {
     filterWord: '',
     beaconId: '',
     storeId: '',
+    storeBranchId: '',
   }
 
   handleSearch = (value, storeNames) => {
@@ -54,6 +56,15 @@ export default class CategoryTable extends Component {
     const filteredStore = stores.filter(store => store.name === value)
     this.setState({
       storeId: filteredStore[0]._id,
+    })
+  }
+
+  changeStoreBranch = (value, storeBranches) => {
+    const filteredStoreBranches = storeBranches.filter(
+      store => store.name === value
+    )
+    this.setState({
+      storeBranchId: filteredStoreBranches[0]._id,
     })
   }
 
@@ -164,6 +175,8 @@ export default class CategoryTable extends Component {
                           message: 'Success',
                           description: 'Beacon has been de-assigned.',
                         })
+
+                        window.location.reload()
                       } catch (err) {
                         notification.error({
                           message: 'Error',
@@ -285,7 +298,7 @@ export default class CategoryTable extends Component {
                   await assignBeaconToStore({
                     variables: {
                       id: this.state.beaconId,
-                      assignId: this.state.storeId,
+                      assignId: this.state.storeBranchId,
                     },
                   })
 
@@ -299,6 +312,8 @@ export default class CategoryTable extends Component {
                     message: 'Success',
                     description: 'Beacon has been assigned.',
                   })
+
+                  window.location.reload()
                 } catch (err) {
                   notification.error({
                     message: 'Error',
@@ -324,12 +339,48 @@ export default class CategoryTable extends Component {
                   }
 
                   return (
-                    <AutoComplete
-                      dataSource={storeNames}
-                      style={{ width: '100%' }}
-                      onSelect={value => this.changeStore(value, data.stores)}
-                      onSearch={value => this.handleSearch(value, storeNames)}
-                    />
+                    <div>
+                      <AutoComplete
+                        dataSource={storeNames}
+                        style={{ width: '100%' }}
+                        onSelect={value => this.changeStore(value, data.stores)}
+                        onSearch={value => this.handleSearch(value, storeNames)}
+                      />
+                      {this.state.storeId && (
+                        <Query
+                          query={STORE_BRANCHES}
+                          variables={{ storeId: this.state.storeId }}
+                        >
+                          {({ loading, error, data }) => {
+                            if (loading) return 'Loading...'
+                            if (error) return `Error: ${error.message}`
+
+                            let storeBranchName = data.storeBranches.map(
+                              sb => sb.name
+                            )
+
+                            return (
+                              <div>
+                                <p className="m-b-16 m-t-16">Select branch</p>
+                                <AutoComplete
+                                  dataSource={storeBranchName}
+                                  style={{ width: '100%' }}
+                                  onSelect={value =>
+                                    this.changeStoreBranch(
+                                      value,
+                                      data.storeBranches
+                                    )
+                                  }
+                                  onSearch={value =>
+                                    this.handleSearch(value, storeNames)
+                                  }
+                                />
+                              </div>
+                            )
+                          }}
+                        </Query>
+                      )}
+                    </div>
                   )
                 }}
               </Query>
